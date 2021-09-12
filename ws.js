@@ -29,78 +29,93 @@ wsBoxes.forEach((box, index) => {
 
 const wordTrace = (row, col, newPath) => {
     let fin = false
+    const newPathLetters = newPath.map(obj => obj.letter)
+    const letters = newPathLetters.join('').toUpperCase()
+    const found = dic.find(word => word.startsWith(letters))
 
-    // if(col+1){
-    //     wordSearch(row, col+1, newPath)
-    // }else{
-    //     fin = true
-    // }
-    if(row+1 < 4){
-        newPath.every
-        wordSearch(row+1,col, newPath)
-    } else{
-        fin = true
+    console.log('THIS IS THE NEW PATH', newPath)
+    console.log('THIS IS THE NEW PATH LETTERS', letters)
+    // console.log('THIS IS THE WORD WE FOUND', found)
+
+    if(found === undefined){
+        // console.log('we are returning')
+        return
+    }else{
+        // console.log('we got in the else')
+        if(col+1 < 4){
+            wordSearch(row, col+1, newPath)
+        }else{
+            fin = true
+        }
+        if(row+1 < 4){
+            wordSearch(row+1, col, newPath)
+        } else{
+            fin = true
+        }
+        if(row+1 < 4 && col-1 >= 0){
+            wordSearch(row+1, col-1, newPath)
+        } else{
+            fin = true
+        }
+        if(row+1 < 4 && col+1 < 4){
+            wordSearch(row+1, col+1, newPath)
+        } else{
+            fin = true
+        }
+        if(col-1 >= 0){
+            const inPath = newPath.some(index => index.row == row && index.col == col-1 )
+            if(!inPath){
+            wordSearch(row, col-1, newPath)
+            } else{
+                fin = true
+            }
+        } else{
+            fin = true
+        }
+        if(row-1 >= 0 && col-1 >= 0){
+            const inPath = newPath.some(index => index.row == row-1 && index.col == col-1 )
+            if(!inPath){
+            wordSearch(row-1,col-1, newPath)
+            } else{
+                fin = true
+            }
+        } else{
+            fin = true
+        }
+        if(row-1 >= 0){
+            const inPath = newPath.some(index => index.row == row-1 && index.col == col )
+            if(!inPath){
+            wordSearch(row-1, col, newPath)
+            } else{
+                fin = true
+            }
+        } else{
+            fin = true
+        }
+        if(row-1 >= 0 && col+1 < 4){
+            wordSearch(row-1, col+1, newPath)
+        } else{
+            fin = true
+        }
+
+
+        
+        if(fin){
+            pathArray.push(newPath)
+        }
     }
-    if(row+1 < 4 && col-1 >= 0){
-        wordSearch(row+1,col-1, newPath)
-    } else{
-        fin = true
-    }
-    if(row+1 < 4 && col+1 < 4){
-        wordSearch(row+1,col+1, newPath)
-    } else{
-        fin = true
-    }
-    if(col+1 < 4){
-        wordSearch(row,col+1, newPath)
-    } else{
-        fin = true
-    }
-
-
-
-
-    if(fin){
-        pathArray.push(newPath)
-    }
-
-    // if(row-1 >= 0 && col < 4){
-        // const inPath = newPath.some(index => index.row == row-1 && index.col == col )
-        // if(!inPath){
-        //     wordSearch(row-1, col, newPath)
-        // }
-    //     } else{
-    //     fin = true
-    // }
-    // if(wordSearch(row-1,col-1, newPath)){
-    //     wordSearch(row-1,col-1, newPath)
-    // } else{
-    //     fin = true
-    // }
-
-    // if(row+1 < 4 && col+1 < 4 && row-1 >= 0 && col-1 >= 0){
-        // wordSearch(row-1,col, newPath)
-        // wordSearch(row-1,col-1, newPath)
-        // wordSearch(row,col+1, newPath)
-        // wordSearch(row,col-1, newPath)
-    // } else{
-    //     pathArray.push(newPath)
-    //     return
-    // }
 }
 
 const wordSearch = (row, col, path=[]) => {
     if(path.length === 0){
-        console.log('started here')
         //Starting a word search on a certain cell
         path.push({letter: randLetters[row][col], row: row, col: col })
         const newPath = Array.from(path)
         wordTrace(row, col, newPath)
     } else{
-        console.log('got here', row, col)
         path.push({letter: randLetters[row][col], row: row, col: col })
         const contPath = Array.from(path)
-        // check if the newly pushed letter is a word in the dictionary
+        //check if the newly pushed letter is a word in the dictionary
         wordTrace(row, col, contPath)
     }
 }
@@ -109,13 +124,13 @@ const wordFetch = async() => {
     const dictionary = await fetch('dictionary.txt')
     dic = await dictionary.text()
     dic = dic.split("\n")
+    dic = dic.filter(word => word.length > 3)
 }
 
 const appExec = async() => {
     await wordFetch()
     randLetters.forEach((row, rowIndex) => {
         row.forEach((letter,letterIndex) => {
-            // console.log(rowIndex, letterIndex)
             wordSearch(rowIndex, letterIndex)
         })
     })
@@ -123,3 +138,13 @@ const appExec = async() => {
 }
 
 appExec()
+
+// const test = async ()=> {
+//     await wordFetch()
+//     console.log('DICTIONARY', dic)
+//     let letters = ['a', 'a'].join('').toUpperCase()
+//     const found = dic.find(word => word.startsWith(letters))
+//     console.log(found)
+// }
+
+// test()
