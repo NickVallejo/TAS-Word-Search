@@ -1,0 +1,7 @@
+current version loops through every possible path that could be taken, and every line that could be drawn from an adjacent square
+this is because the algorithm only stops if it hits a wall. It does not stop if a word is not found.
+initially, we wanted to continue the path in the event that a path may write a word later in the iteration
+now it might make sense to stop the iteration if a word does in the dic does not begin with the letters
+if (begins with letters) do x, if not return
+
+FOLLOW THE PATH OF JUST ONE PATH AND SEE HOW THE FUNCTIONS FUNCTION (IE. COL+1)
